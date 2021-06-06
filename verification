@@ -1,0 +1,35 @@
+#!/bin/bash
+
+echo 'Logging into Docker Hub. Please enter docker password'
+sudo docker login -u noorishhassan
+
+read -p 'Enter repository to pull image from: ' rep
+echo "Name of repository is $rep"
+read -p 'Enter tag: ' tag
+echo "Tag is $tag"
+
+sudo docker pull noorishhassan/$rep:$tag
+if [ $? -eq 0 ]; then 
+	echo 'Image pulled successfully'
+else
+	echo 'Error pulling image'
+fi
+
+read -p 'Enter name of container to run pulled image on: ' con
+echo "Name of container is $con"
+
+sudo docker run -it --rm -d -p 80:80 --name \
+${con} noorishhassan/$rep:$tag 
+if [ $? -eq 0 ]; then
+	echo "$con is running"
+else
+	echo "Error running container $cont"
+fi
+
+echo 'CURL port 80:80'
+sudo curl http://localhost:80
+if [ $? -eq 0 ]; then
+        echo 'Curled'
+else
+        echo 'Error in curling'
+fi

@@ -1,0 +1,44 @@
+#!/bin/bash
+
+uname="noorishhassan"
+echo 'Loggin into Docker Hub. Please enter Docker password'
+sudo docker login -u $uname
+
+read -p 'Enter name of container: ' con
+echo "Name of container is $con"
+
+sudo docker build -t $con .
+if [ $? -eq 0 ]; then 
+	echo 'Building container' 
+else
+	echo 'Error building container'
+fi
+
+sudo docker run -it --rm -d -p 81:81 --name \
+$con $con 
+if [ $? -eq 0 ]; then
+        echo 'Running Container'
+else
+        echo 'Error running container'
+fi
+
+read -p 'Enter name of repository: ' rep
+echo "Name of repository is $rep"
+
+read -p 'Enter tag of container: ' tag
+echo "Tag of container is $tag"
+
+sudo docker commit $con $uname/$rep:$tag
+if [ $? -eq 0 ]; then
+        echo 'Committed to Docker'
+else
+        echo 'Error committing docker'
+fi
+
+sudo docker push $uname/$rep:$tag
+if [ $? -eq 0 ]; then
+        echo 'Pushed to Docker'
+else
+        echo 'Error pushing to container'
+fi
+
